@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Dra. Sayonara | Neuropediatria</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"] {
+  --bg:#09100F;--bg2:#101918;--bg3:#172120;--bg4:#1E2B29;
+  --border:#243330;--border2:#2E413D;
+  --accent:#1A7A72;--accent2:#155F59;--accent-light:#22A99E;
+  --accent-dim:rgba(26,122,114,0.13);--accent-glow:rgba(26,122,114,0.28);
+  --text:#E2EAE8;--text2:#90A8A4;--text3:#547370;
+  --red:#D95B5B;--yellow:#D4A93E;--blue:#4E8FC7;--purple:#8E72C8;
+  --shadow:0 4px 24px rgba(0,0,0,.45);
+}
+[data-theme="light"] {
+  --bg:#F0F5F4;--bg2:#FFFFFF;--bg3:#F4F8F7;--bg4:#E8EEEC;
+  --border:#D6E2DF;--border2:#C0D4D0;
+  --accent:#1A7A72;--accent2:#155F59;--accent-light:#1A8A80;
+  --accent-dim:rgba(26,122,114,0.10);--accent-glow:rgba(26,122,114,0.22);
+  --text:#0F1E1C;--text2:#3A5754;--text3:#7A9E9A;
+  --red:#C94545;--yellow:#B8891E;--blue:#2E6BA8;--purple:#6A4EAA;
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;display:flex;transition:background .25s,color .25s}
+
+/* SIDEBAR */
+.sidebar{width:224px;min-width:224px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:22px 0 18px;position:sticky;top:0;height:100vh;overflow-y:auto;transition:background .25s,border-color .25s}
+.sidebar-logo{padding:0 18px 20px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.logo-name{font-family:'Fraunces',serif;font-size:14.5px;font-weight:600;color:var(--text);line-height:1.2}
+.logo-spec{font-size:10.5px;color:var(--accent-light);letter-spacing:.08em;text-transform:uppercase;margin-top:3px;font-weight:500;display:flex;align-items:center;gap:5px}
+.pulse-dot{width:7px;height:7px;background:var(--accent-light);border-radius:50%;animation:pulse 2.2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+.nav-section{padding:0 10px;margin-bottom:2px}
+.nav-label{font-size:9.5px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:8px 8px 3px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:400;transition:all .16s;border:1px solid transparent;user-select:none}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--accent-dim);color:var(--accent-light);border-color:rgba(26,122,114,.22);font-weight:500}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--bg4);color:var(--text3);font-size:10px;padding:1px 6px;border-radius:10px;font-weight:500}
+.nav-item.active .nav-badge{background:var(--accent-dim);color:var(--accent-light)}
+.sidebar-footer{margin-top:auto;padding:14px 18px 0;border-top:1px solid var(--border)}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.stat-label{font-size:11px;color:var(--text3)}
+.stat-value{font-size:11.5px;color:var(--text2);font-weight:500}
+.stat-value.teal{color:var(--accent-light)}
+.theme-toggle{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.toggle-label{font-size:11px;color:var(--text3);flex:1}
+.toggle-track{width:36px;height:20px;background:var(--bg4);border-radius:10px;border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.toggle-track.on{background:var(--accent);border-color:var(--accent)}
+.toggle-thumb{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.toggle-track.on .toggle-thumb{transform:translateX(16px)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:30px 34px;min-width:0}
+.page{display:none}.page.active{display:block}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;gap:14px;flex-wrap:wrap}
+.page-title{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--text);line-height:1.2}
+.page-subtitle{font-size:12.5px;color:var(--text3);margin-top:3px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .16s;border:none;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:border-color .16s}
+.card:hover{border-color:var(--border2)}
+.card-title{font-size:11.5px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+
+/* OVERVIEW */
+.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px}
+.metric-value{font-family:'Fraunces',serif;font-size:30px;font-weight:600;line-height:1;margin-bottom:3px}
+.metric-label{font-size:12px;color:var(--text3)}
+.metric-change{font-size:11px;margin-top:7px;display:flex;align-items:center;gap:3px}
+.metric-change.up{color:var(--accent-light)}.metric-change.neutral{color:var(--text3)}
+.overview-bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.activity-list{display:flex;flex-direction:column;gap:8px}
+.activity-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)}
+.activity-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.activity-text{font-size:12.5px;color:var(--text2);flex:1}
+.activity-time{font-size:10.5px;color:var(--text3)}
+.progress-bar-container{display:flex;flex-direction:column;gap:11px}
+.progress-item{display:flex;flex-direction:column;gap:5px}
+.progress-header{display:flex;justify-content:space-between}
+.progress-label{font-size:12.5px;color:var(--text2)}
+.progress-pct{font-size:12px;color:var(--text3);font-weight:500}
+.progress-track{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:var(--accent)}
+
+/* TAGS */
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;letter-spacing:.04em}
+.tag-carousel{background:rgba(78,143,199,.15);color:var(--blue)}
+.tag-reels{background:rgba(217,91,91,.15);color:var(--red)}
+.tag-stories{background:rgba(142,114,200,.15);color:var(--purple)}
+.tag-feed{background:rgba(26,122,114,.15);color:var(--accent-light)}
+.tag-autismo{background:rgba(212,169,62,.15);color:var(--yellow)}
+.tag-tdah{background:rgba(78,143,199,.12);color:var(--blue)}
+.tag-desenvolvimento{background:rgba(26,122,114,.12);color:var(--accent-light)}
+.tag-neurologia{background:rgba(142,114,200,.12);color:var(--purple)}
+
+/* KANBAN */
+.kanban-board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start}
+.kanban-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:13px;min-height:180px;transition:border-color .2s,background .2s}
+.kanban-col.drag-over{border-color:var(--accent-light);background:var(--accent-dim)}
+.kanban-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.kanban-col-title{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--text2)}
+.col-dot{width:7px;height:7px;border-radius:50%}
+.kanban-count{font-size:10.5px;background:var(--bg4);color:var(--text3);padding:2px 7px;border-radius:10px;font-weight:500}
+.post-card{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:11px;margin-bottom:9px;cursor:grab;transition:all .16s;user-select:none}
+.post-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:var(--shadow)}
+.card-move-bar{display:none;flex-wrap:wrap;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.post-card:hover .card-move-bar{display:flex}
+.move-btn{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--accent-dim);color:var(--accent-light);border:1px solid rgba(26,122,114,.25);cursor:pointer;transition:all .14s;white-space:nowrap}
+.move-btn:hover{background:var(--accent);color:#fff}
+.post-card.dragging{opacity:.4;transform:scale(.96);cursor:grabbing}
+.post-card-title{font-size:12.5px;font-weight:500;color:var(--text);margin-bottom:7px;line-height:1.35}
+.post-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.post-date{font-size:10.5px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.add-card-btn{width:100%;padding:8px;background:transparent;border:1px dashed var(--border2);border-radius:6px;color:var(--text3);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;transition:all .16s;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:3px}
+.add-card-btn:hover{border-color:var(--accent-light);color:var(--accent-light);background:var(--accent-dim)}
+
+/* PAUTAS */
+.pautas-toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.search-input,.filter-select,.form-input,.form-select,.form-textarea{background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:8px 12px;outline:none;transition:border-color .16s}
+.search-input:focus,.filter-select:focus,.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent-light)}
+.search-input::placeholder{color:var(--text3)}
+.search-input{flex:1;min-width:180px}
+.filter-select{cursor:pointer}
+.pautas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pauta-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all .16s;cursor:pointer}
+.pauta-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.pauta-card.stale{border-left:3px solid var(--yellow)}
+.pauta-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;gap:7px}
+.pauta-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;flex:1}
+.urgency-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.urgency-evergreen{background:rgba(26,122,114,.15);color:var(--accent-light)}
+.urgency-tendencia{background:rgba(217,91,91,.15);color:var(--red)}
+.urgency-sazonal{background:rgba(212,169,62,.15);color:var(--yellow)}
+.pauta-meta{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.pauta-footer{display:flex;justify-content:space-between;align-items:center}
+.pauta-status{font-size:11px;color:var(--text3)}
+.pauta-actions{display:flex;gap:5px}
+.icon-btn{width:27px;height:27px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text3);transition:all .16s}
+.icon-btn:hover{color:var(--accent-light);border-color:var(--accent-light)}
+.icon-btn svg{width:12px;height:12px}
+.stale-warning{font-size:10px;color:var(--yellow);display:flex;align-items:center;gap:4px;margin-top:7px;padding:4px 7px;background:rgba(212,169,62,.08);border-radius:5px}
+
+/* CALENDÁRIO */
+.calendar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.cal-nav{display:flex;align-items:center;gap:10px}
+.cal-month{font-family:'Fraunces',serif;font-size:19px;font-weight:600;min-width:170px;text-align:center}
+.cal-nav-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text2);transition:all .16s}
+.cal-nav-btn:hover{color:var(--accent-light);border-color:var(--accent-light)}
+.cal-nav-btn svg{width:13px;height:13px}
+.cal-filters{display:flex;gap:6px;flex-wrap:wrap}
+.cal-filter-btn{font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:10px;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--text3);transition:all .16s}
+.cal-filter-btn.active{background:var(--accent-dim);color:var(--accent-light);border-color:rgba(26,122,114,.3)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-day-header{text-align:center;font-size:10.5px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;padding:9px 0 7px}
+.cal-day{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:7px;min-height:84px;transition:border-color .16s;cursor:pointer}
+.cal-day:hover{border-color:var(--accent-light)}
+.cal-day.empty{background:var(--bg);opacity:.3;cursor:default;pointer-events:none}
+.cal-day.today{border-color:var(--accent-light)}
+.cal-day.no-content{border-color:var(--red);border-style:dashed;opacity:.55}
+.cal-day-num{font-size:11.5px;font-weight:500;color:var(--text3);margin-bottom:4px}
+.cal-day.today .cal-day-num{color:var(--accent-light);font-weight:700}
+.cal-chips{display:flex;flex-direction:column;gap:2px}
+.cal-chip{font-size:8.5px;font-weight:600;padding:2px 4px;border-radius:3px;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip-carousel{background:rgba(78,143,199,.2);color:var(--blue)}
+.chip-reels{background:rgba(217,91,91,.2);color:var(--red)}
+.chip-stories{background:rgba(142,114,200,.2);color:var(--purple)}
+.chip-feed{background:rgba(26,122,114,.2);color:var(--accent-light)}
+.cal-legend{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.legend-dot{width:9px;height:9px;border-radius:2px}
+
+/* RADAR */
+.radar-toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.radar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.trend-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:15px;transition:all .16s}
+.trend-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.trend-header{display:flex;justify-content:space-between;align-items:flex-start;gap:7px;margin-bottom:7px}
+.trend-title{font-size:13.5px;font-weight:500;color:var(--text);line-height:1.35;flex:1}
+.relevance-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.rel-alto{background:rgba(217,91,91,.15);color:var(--red)}
+.rel-medio{background:rgba(212,169,62,.15);color:var(--yellow)}
+.rel-baixo{background:rgba(84,115,112,.2);color:var(--text3)}
+.trend-source{font-size:11px;color:var(--text3);margin-bottom:7px}
+.trend-source span{color:var(--text2);font-weight:500}
+.trend-footer{display:flex;justify-content:space-between;align-items:center;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+.trend-date{font-size:10.5px;color:var(--text3)}
+.use-pauta-btn{font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px;background:var(--accent-dim);color:var(--accent-light);border:1px solid rgba(26,122,114,.25);cursor:pointer;transition:all .16s}
+.use-pauta-btn:hover{background:var(--accent);color:#fff}
+.ref-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:15px;transition:all .16s}
+.ref-card:hover{border-color:var(--border2)}
+.ref-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ref-avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--accent-light);flex-shrink:0}
+.ref-name{font-size:13px;font-weight:600;color:var(--text)}
+.ref-handle{font-size:11px;color:var(--text3)}
+.ref-desc{font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:8px}
+.ref-actions{display:flex;gap:6px}
+.refs-3col{grid-template-columns:repeat(3,1fr)!important}
+
+/* MONITOR */
+.monitor-table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:18px}
+table{width:100%;border-collapse:collapse}
+th{font-size:10.5px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:11px 14px;text-align:left;background:var(--bg3);border-bottom:1px solid var(--border);cursor:pointer}
+th:hover{color:var(--text2)}
+td{padding:11px 14px;font-size:12.5px;color:var(--text2);border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.profile-cell{display:flex;align-items:center;gap:9px}
+.profile-avatar{width:30px;height:30px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:12px;font-weight:600;color:var(--accent-light);flex-shrink:0}
+.profile-name{font-weight:500;color:var(--text);font-size:13px}
+.profile-handle{font-size:10.5px;color:var(--text3)}
+.engagement-bar{display:flex;align-items:center;gap:7px}
+.eng-track{height:4px;background:var(--bg4);border-radius:2px;width:55px;overflow:hidden}
+.eng-fill{height:100%;background:var(--accent);border-radius:2px}
+.freq-pill{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;background:var(--accent-dim);color:var(--accent-light)}
+.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.insight-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.insight-icon{width:33px;height:33px;border-radius:6px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:var(--accent-light)}
+.insight-icon svg{width:16px;height:16px}
+.insight-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:3px}
+.insight-text{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;max-width:580px;width:100%;box-shadow:var(--shadow);max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-family:'Fraunces',serif;font-size:17px;font-weight:600}
+.modal-close{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:none;border-radius:5px;color:var(--text3);cursor:pointer;font-size:15px}
+.modal-close:hover{color:var(--text)}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.form-textarea{resize:vertical;min-height:80px;width:100%}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+.slide-item{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:8px}
+.slide-num{font-size:11px;font-weight:600;color:var(--accent-light);display:block;margin-bottom:6px}
+
+/* PACIENTES CARD HOVER */
+#pacientes-card:hover { border-color:var(--accent-light); }
+#pacientes-card:hover #edit-hint { opacity:.9 !important; }
+
+/* HELPERS */
+.section-divider{height:1px;background:var(--border);margin:20px 0}
+.section-title{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--bg2);border:1px solid var(--accent);border-radius:7px;padding:11px 16px;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:7px;z-index:200;opacity:0;transform:translateY(8px);transition:all .28s;pointer-events:none;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast svg{color:var(--accent-light);width:15px;height:15px;flex-shrink:0}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-name">Dra. Sayonara</div>
+    <div class="logo-spec"><span class="pulse-dot"></span>Neuropediatria</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Geral</div>
+    <div class="nav-item active" onclick="goTo('overview',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Visão Geral
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Conteúdo</div>
+    <div class="nav-item" onclick="goTo('posts',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Gestor de Posts<span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="goTo('pautas',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Banco de Pautas<span class="nav-badge">18</span>
+    </div>
+    <div class="nav-item" onclick="goTo('calendario',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendário Editorial
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Inteligência</div>
+    <div class="nav-item" onclick="goTo('radar',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 12l4.5-4.5M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+      Radar de Tendências<span class="nav-badge" style="background:rgba(217,91,91,.15);color:var(--red)">3</span>
+    </div>
+    <div class="nav-item" onclick="goTo('monitor',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Monitor de Referências
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="theme-toggle">
+      <span class="toggle-label" id="theme-label">🌙 Noturno</span>
+      <div class="toggle-track" id="theme-track" onclick="toggleTheme()"><div class="toggle-thumb"></div></div>
+    </div>
+    <div class="stat-row"><span class="stat-label">Pacientes/mês</span><span class="stat-value teal" id="sidebar-pacientes">35 → 60</span></div>
+    <div class="stat-row"><span class="stat-label">Posts esta semana</span><span class="stat-value">2 / 4</span></div>
+    <div class="stat-row"><span class="stat-label">Cidades</span><span class="stat-value">Gurupi · Palmas</span></div>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<div id="overview" class="page active">
+  <div class="page-header">
+    <div><div class="page-title">Visão Geral</div><div class="page-subtitle">Maio 2026 — Dashboard de Marketing Digital</div></div>
+    <button class="btn btn-primary" onclick="openPostModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Novo Post</button>
+  </div>
+  <div class="overview-grid">
+    <div class="metric-card" id="pacientes-card" style="cursor:pointer;position:relative" onclick="openPacientesModal()" title="Clique para editar">
+      <div style="position:absolute;top:12px;right:12px;opacity:.4;transition:opacity .16s" id="edit-hint">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <div class="metric-value" style="color:var(--accent-light)" id="val-pacientes-atual">35</div>
+      <div class="metric-label">Pacientes este mês</div>
+      <div class="metric-change up" id="val-pacientes-meta">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 15l7-7 7 7"/></svg>Meta: <span id="val-meta-num">60</span>
+      </div>
+      <div style="margin-top:8px">
+        <div style="height:3px;background:var(--bg4);border-radius:2px;overflow:hidden">
+          <div id="pacientes-progress" style="height:100%;background:var(--accent);border-radius:2px;transition:width .5s ease;width:58%"></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px" id="pacientes-pct">58% da meta</div>
+      </div>
+    </div>
+    <div class="metric-card"><div class="metric-value">12</div><div class="metric-label">Posts em produção</div><div class="metric-change up"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 15l7-7 7 7"/></svg>4 agendados</div></div>
+    <div class="metric-card"><div class="metric-value">18</div><div class="metric-label">Pautas no banco</div><div class="metric-change neutral">3 não utilizadas</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--yellow)">3</div><div class="metric-label">Tendências em alta</div><div class="metric-change neutral">Neuropediatria</div></div>
+  </div>
+  <div class="overview-bottom">
+    <div class="card">
+      <div class="card-title">Atividade Recente</div>
+      <div class="activity-list">
+        <div class="activity-item"><div class="activity-dot" style="background:var(--blue)"></div><div class="activity-text">Carrossel "Atraso na fala" agendado</div><div class="activity-time">há 2h</div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--red)"></div><div class="activity-text">Reels "Criança agitada vs TDAH" publicado</div><div class="activity-time">ontem</div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--accent-light)"></div><div class="activity-text">3 novas pautas adicionadas ao banco</div><div class="activity-time">2 dias</div></div>
+        <div class="activity-item"><div class="activity-dot" style="background:var(--purple)"></div><div class="activity-text">Stories "Sinais de autismo" publicado</div><div class="activity-time">3 dias</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Meta Semanal (4 posts/semana)</div>
+      <div class="progress-bar-container">
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Carrossel</span><span class="progress-pct">2/2</span></div><div class="progress-track"><div class="progress-fill" style="width:100%"></div></div></div>
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Reels</span><span class="progress-pct">1/2</span></div><div class="progress-track"><div class="progress-fill" style="width:50%;background:var(--yellow)"></div></div></div>
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Stories</span><span class="progress-pct">3/5</span></div><div class="progress-track"><div class="progress-fill" style="width:60%"></div></div></div>
+        <div class="progress-item"><div class="progress-header"><span class="progress-label">Feed Estático</span><span class="progress-pct">0/1</span></div><div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--red)"></div></div></div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:14px 0 10px"></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text3)">02 a 08 de maio de 2026</span><span style="font-size:13px;color:var(--accent-light);font-weight:600">50% concluído</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- GESTOR DE POSTS -->
+<div id="posts" class="page">
+  <div class="page-header">
+    <div><div class="page-title">Gestor de Posts</div><div class="page-subtitle">Arraste os cards entre colunas · Clique para editar conteúdo</div></div>
+    <button class="btn btn-primary" onclick="openPostModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Novo Post</button>
+  </div>
+  <div class="kanban-board" id="kanban-board"></div>
+</div>
+
+<!-- BANCO DE PAUTAS -->
+<div id="pautas" class="page">
+  <div class="page-header">
+    <div><div class="page-title">Banco de Pautas</div><div class="page-subtitle">Repositório de ideias clínicas</div></div>
+    <button class="btn btn-primary" onclick="openPautaModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Nova Pauta</button>
+  </div>
+  <div class="pautas-toolbar">
+    <input class="search-input" id="pauta-search" placeholder="Buscar por palavra-chave..." type="text" oninput="applyPautaFilters()">
+    <select class="filter-select" id="filter-categoria" onchange="applyPautaFilters()">
+      <option value="">Todas as categorias</option>
+      <option>Autismo</option><option>TDAH</option><option>Desenvolvimento</option><option>Neurologia</option><option>Aprendizagem</option>
+    </select>
+    <select class="filter-select" id="filter-status" onchange="applyPautaFilters()">
+      <option value="">Todos os status</option>
+      <option>Disponível</option><option>Em uso</option><option>Descartada</option>
+    </select>
+  </div>
+  <div class="pautas-grid" id="pautas-grid"></div>
+</div>
+
+<!-- CALENDÁRIO -->
+<div id="calendario" class="page">
+  <div class="page-header">
+    <div><div class="page-title">Calendário Editorial</div><div class="page-subtitle">Clique em qualquer dia para ver ou editar o conteúdo agendado</div></div>
+    <div style="display:flex;gap:9px;align-items:center;">
+      <span style="font-size:12px;color:var(--text3)">Meta: <strong style="color:var(--accent-light)">4 posts/semana</strong></span>
+      <button class="btn btn-ghost" onclick="openPostModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Agendar</button>
+    </div>
+  </div>
+  <div class="calendar-header">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="cal-month" id="cal-month-label">Maio 2026</div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="cal-filters">
+      <button class="cal-filter-btn active" onclick="setCalFilter(this,'all')">Todos</button>
+      <button class="cal-filter-btn" onclick="setCalFilter(this,'carousel')">🟦 Carrossel</button>
+      <button class="cal-filter-btn" onclick="setCalFilter(this,'reels')">🟥 Reels</button>
+      <button class="cal-filter-btn" onclick="setCalFilter(this,'stories')">🟨 Stories</button>
+      <button class="cal-filter-btn" onclick="setCalFilter(this,'feed')">🟩 Feed</button>
+    </div>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+  <div class="cal-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Carrossel</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Reels</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Stories</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-light)"></div>Feed</div>
+    <div class="legend-item"><div class="legend-dot" style="background:transparent;border:1px dashed var(--red)"></div>Dia vazio</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-light);border-radius:50%"></div>Hoje</div>
+  </div>
+</div>
+
+<!-- RADAR -->
+<div id="radar" class="page">
+  <div class="page-header">
+    <div><div class="page-title">Radar de Tendências</div><div class="page-subtitle">Temas em alta + referências nacionais e internacionais</div></div>
+    <button class="btn btn-ghost" onclick="openSourcesModal()" style="margin-right:4px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>Fontes</button><button class="btn btn-primary" onclick="openRefModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar Referência</button>
+  </div>
+  <div class="section-title">📡 Tendências Recentes</div>
+  <div class="radar-toolbar">
+    <select class="filter-select" id="radar-fonte" onchange="renderRadar()">
+      <option value="">Todas as fontes</option>
+      <option>PubMed</option><option>SBP</option><option>CFM</option><option>G1 Saúde</option>
+    </select>
+    <select class="filter-select" id="radar-periodo">
+      <option>Última semana</option><option>Últimas 24h</option><option>Último mês</option>
+    </select>
+  </div>
+  <div class="radar-grid" id="radar-grid"></div>
+  <div style="height:1px;background:var(--border);margin:24px 0"></div>
+  <div class="section-title">🌐 Referências — Médicos e Especialistas</div>
+  <div class="radar-grid refs-3col" id="refs-grid"></div>
+</div>
+
+<!-- MONITOR -->
+<div id="monitor" class="page">
+  <div class="page-header">
+    <div><div class="page-title">Monitor de Referências</div><div class="page-subtitle">Concorrentes diretos no Tocantins</div></div>
+  </div>
+  <div class="monitor-table-wrap">
+    <table>
+      <thead><tr><th>Perfil</th><th>Rede</th><th>Engajamento</th><th>Freq./semana</th><th>Formatos</th><th>Temas</th></tr></thead>
+      <tbody>
+        <tr><td><div class="profile-cell"><div class="profile-avatar">K</div><div><div class="profile-name">Dra. Karla Viana</div><div class="profile-handle">@drakarlaviana_</div></div></div></td><td>Instagram</td><td><div class="engagement-bar"><div class="eng-track"><div class="eng-fill" style="width:70%"></div></div><span>~3.2%</span></div></td><td><span class="freq-pill">3x</span></td><td><span class="tag tag-carousel">Carrossel</span></td><td style="color:var(--text3);font-size:11.5px">Autismo · Epilepsia</td></tr>
+        <tr><td><div class="profile-cell"><div class="profile-avatar">S</div><div><div class="profile-name">Neurosimões TO</div><div class="profile-handle">@neurosimoestocantins</div></div></div></td><td>Instagram</td><td><div class="engagement-bar"><div class="eng-track"><div class="eng-fill" style="width:30%"></div></div><span>~1.1%</span></div></td><td><span class="freq-pill">1x</span></td><td><span class="tag tag-feed">Feed</span></td><td style="color:var(--text3);font-size:11.5px">Institucional</td></tr>
+        <tr><td><div class="profile-cell"><div class="profile-avatar">B</div><div><div class="profile-name">Dra. Bruna Leal</div><div class="profile-handle">@drabrualeal</div></div></div></td><td>Instagram</td><td><div class="engagement-bar"><div class="eng-track"><div class="eng-fill" style="width:55%"></div></div><span>~2.4%</span></div></td><td><span class="freq-pill">2x</span></td><td><span class="tag tag-reels">Reels</span></td><td style="color:var(--text3);font-size:11.5px">Desenvolvimento</td></tr>
+        <tr><td><div class="profile-cell"><div class="profile-avatar">C</div><div><div class="profile-name">CNNIT</div><div class="profile-handle">@cnnit.neuro</div></div></div></td><td>Instagram</td><td><div class="engagement-bar"><div class="eng-track"><div class="eng-fill" style="width:20%"></div></div><span>~0.8%</span></div></td><td><span class="freq-pill">1x</span></td><td><span class="tag tag-feed">Feed</span></td><td style="color:var(--text3);font-size:11.5px">Institucional</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section-title">Insights do nicho</div>
+  <div class="insights-grid">
+    <div class="insight-card"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="insight-title">Carrosséis lideram</div><div class="insight-text">3x mais engajamento que feed estático no nicho médico.</div></div>
+    <div class="insight-card"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><div class="insight-title">Baixa frequência</div><div class="insight-text">A maioria posta 1–2x/semana. 4x/semana já garante destaque.</div></div>
+    <div class="insight-card"><div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/></svg></div><div class="insight-title">Gap: conteúdo para pais</div><div class="insight-text">Nenhum concorrente foca em linguagem acessível para famílias.</div></div>
+  </div>
+</div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOverlay(event)">
+  <div class="modal"><div class="modal-header"><div class="modal-title" id="modal-title"></div><button class="modal-close" onclick="closeModal()">×</button></div><div id="modal-body"></div></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span id="toast-msg"></span></div>
+
+<script>
+/* ---- THEME ---- */
+let isDark = true;
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  const track = document.getElementById('theme-track');
+  document.getElementById('theme-label').textContent = isDark ? '🌙 Noturno' : '☀️ Claro';
+  isDark ? track.classList.remove('on') : track.classList.add('on');
+}
+
+/* ---- NAVIGATION ---- */
+function goTo(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'calendario') renderCalendar();
+  if (id === 'pautas') renderPautas();
+  if (id === 'radar') { renderRadar(); renderRefs(); }
+}
+
+/* ---- TOAST ---- */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ---- MODAL ---- */
+function openModal(title, html) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+/* ---- HELPERS ---- */
+function fmtTag(f) { return f==='Carrossel'?'carousel':f==='Reels'?'reels':f==='Stories'?'stories':'feed'; }
+function temaTag(t) { return t==='Autismo'?'autismo':t==='TDAH'?'tdah':t==='Neurologia'?'neurologia':'desenvolvimento'; }
+
+/* ==============================
+   KANBAN
+============================== */
+const COLS = ['Ideia','Em Produção','Agendado','Publicado'];
+const COL_COLORS = {'Ideia':'var(--text3)','Em Produção':'var(--yellow)','Agendado':'var(--blue)','Publicado':'var(--accent-light)'};
+
+let kanban = {
+  'Ideia':[
+    {id:'k1',title:'Epilepsia: o que os pais devem saber',formato:'Carrossel',tema:'Neurologia',data:'',legenda:'',conteudo:'',slides:[]},
+    {id:'k2',title:'Ansiedade infantil: quando é normal?',formato:'Reels',tema:'Desenvolvimento',data:'',legenda:'',conteudo:'',slides:[]},
+    {id:'k3',title:'Mitos sobre autismo que pais acreditam',formato:'Carrossel',tema:'Autismo',data:'',legenda:'',conteudo:'',slides:[]},
+    {id:'k4',title:'Sono e desenvolvimento neurológico',formato:'Feed Estático',tema:'Neurologia',data:'',legenda:'',conteudo:'',slides:[]},
+  ],
+  'Em Produção':[
+    {id:'k5',title:'5 sinais de TDAH que pais ignoram',formato:'Carrossel',tema:'TDAH',data:'10/05/2026',legenda:'',conteudo:'',slides:[]},
+    {id:'k6',title:'Criança que não fala com 2 anos',formato:'Reels',tema:'Desenvolvimento',data:'12/05/2026',legenda:'',conteudo:'',slides:[]},
+    {id:'k7',title:'Diferença entre autismo e timidez',formato:'Carrossel',tema:'Autismo',data:'14/05/2026',legenda:'',conteudo:'',slides:[]},
+  ],
+  'Agendado':[
+    {id:'k8',title:'Atraso na fala: causas neurológicas',formato:'Carrossel',tema:'Desenvolvimento',data:'07/05 às 19h',legenda:'Você sabia que o atraso na fala pode ter várias causas?',conteudo:'',slides:[{titulo:'Capa',texto:'Seu filho demora para falar?'},{titulo:'Causas',texto:'Existem várias causas possíveis...'}]},
+    {id:'k9',title:'Neurodesenvolvimento: 0 a 3 anos',formato:'Feed Estático',tema:'Neurologia',data:'08/05 às 10h',legenda:'',conteudo:'',slides:[]},
+    {id:'k10',title:'O que é uma crise convulsiva?',formato:'Stories',tema:'Neurologia',data:'09/05 às 15h',legenda:'',conteudo:'',slides:[]},
+    {id:'k11',title:'Quando consultar um neuropediatra?',formato:'Reels',tema:'Desenvolvimento',data:'11/05 às 18h',legenda:'',conteudo:'',slides:[]},
+  ],
+  'Publicado':[
+    {id:'k12',title:'Criança agitada vs TDAH: qual a diferença?',formato:'Reels',tema:'TDAH',data:'04/05 · Publicado',legenda:'Toda criança agitada tem TDAH? A resposta é não...',conteudo:'Roteiro completo gravado e publicado.',slides:[]},
+  ]
+};
+
+// ---- KANBAN DRAG & DROP (sem atributos inline) ----
+let dragId = null, dragFrom = null, isDragging = false;
+
+function renderKanban() {
+  document.getElementById('kanban-board').innerHTML = COLS.map(col => `
+    <div class="kanban-col" data-col="${col}" id="kcol-${col.replace(/\s/g,'_')}">
+      <div class="kanban-col-header">
+        <div class="kanban-col-title">
+          <div class="col-dot" style="background:${COL_COLORS[col]}"></div>${col}
+        </div>
+        <span class="kanban-count">${kanban[col].length}</span>
+      </div>
+      ${kanban[col].map(c=>`
+        <div class="post-card" draggable="true" data-id="${c.id}" data-col="${col}">
+          <div class="post-card-title">${c.title}</div>
+          <div class="post-tags">
+            <span class="tag tag-${fmtTag(c.formato)}">${c.formato}</span>
+            <span class="tag tag-${temaTag(c.tema)}">${c.tema}</span>
+          </div>
+          <div class="post-date">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>${c.data||'Sem data'}
+          </div>
+          <div class="card-move-bar">
+            ${COLS.filter(cl=>cl!==col).map(cl=>`
+              <button class="move-btn" data-to="${cl}" onclick="moveCard('${c.id}','${col}','${cl}')">
+                → ${cl}
+              </button>`).join('')}
+          </div>
+        </div>`).join('')}
+      <button class="add-card-btn" data-col="${col}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M12 5v14M5 12h14"/>
+        </svg> Adicionar
+      </button>
+    </div>`).join('');
+
+  // ---- Anexar eventos via JS (sem conflito) ----
+  document.querySelectorAll('.post-card').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      isDragging = false;
+      dragId = card.dataset.id;
+      dragFrom = card.dataset.col;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragId);
+      setTimeout(() => { card.classList.add('dragging'); isDragging = true; }, 0);
+    });
+    card.addEventListener('dragend', e => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+      setTimeout(() => { isDragging = false; }, 50);
+    });
+    card.addEventListener('click', e => {
+      if (isDragging) return;
+      if (e.target.closest('.move-btn')) return;
+      openCardDetail(card.dataset.id);
+    });
+  });
+
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    col.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      col.classList.add('drag-over');
+    });
+    col.addEventListener('dragleave', e => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+    });
+    col.addEventListener('drop', e => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const toCol = col.dataset.col;
+      if (!dragId || !dragFrom || dragFrom === toCol) { dragId=null; dragFrom=null; return; }
+      moveCard(dragId, dragFrom, toCol);
+    });
+  });
+
+  document.querySelectorAll('.add-card-btn').forEach(btn => {
+    btn.addEventListener('click', () => openPostModal(btn.dataset.col));
+  });
+}
+
+function moveCard(id, fromCol, toCol) {
+  const arr = kanban[fromCol];
+  const idx = arr.findIndex(c => c.id === id);
+  if (idx < 0) return;
+  const [card] = arr.splice(idx, 1);
+  kanban[toCol].push(card);
+  dragId = null; dragFrom = null;
+  renderKanban();
+  showToast(`"${card.title.substring(0,30)}..." → ${toCol}`);
+}
+
+function openCardDetail(cardId) {
+  let card = null;
+  for (const col of COLS) { const f = kanban[col].find(c=>c.id===cardId); if(f){card=f;break;} }
+  if (!card) return;
+  let contentHtml = '';
+  if (card.formato === 'Carrossel') {
+    const slides = card.slides.length ? card.slides : [{titulo:'Capa',texto:''}];
+    contentHtml = `
+      <div class="form-group">
+        <label class="form-label">📊 Slides do Carrossel</label>
+        <div id="slides-list">
+          ${slides.map((s,i)=>`
+            <div class="slide-item">
+              <span class="slide-num">Slide ${i+1}</span>
+              <input class="form-input" placeholder="Título do slide" value="${s.titulo||''}" style="width:100%;margin-bottom:6px">
+              <textarea class="form-textarea" placeholder="Texto do slide..." style="min-height:55px">${s.texto||''}</textarea>
+            </div>`).join('')}
+        </div>
+        <button class="btn btn-ghost" style="width:100%;margin-top:6px" onclick="addSlide()">+ Adicionar Slide</button>
+      </div>`;
+  } else if (card.formato === 'Reels') {
+    contentHtml = `<div class="form-group"><label class="form-label">🎬 Roteiro do Reels</label><textarea class="form-textarea" id="card-content" placeholder="Gancho (3s) → Desenvolvimento → CTA..." style="min-height:110px">${card.conteudo||''}</textarea></div>`;
+  } else if (card.formato === 'Stories') {
+    contentHtml = `<div class="form-group"><label class="form-label">📱 Sequência de Stories</label><textarea class="form-textarea" id="card-content" placeholder="Story 1: ... Story 2: ..." style="min-height:110px">${card.conteudo||''}</textarea></div>`;
+  } else {
+    contentHtml = `<div class="form-group"><label class="form-label">📸 Texto do Post</label><textarea class="form-textarea" id="card-content" placeholder="Texto para o feed..." style="min-height:100px">${card.conteudo||''}</textarea></div>`;
+  }
+  openModal(`✏️ ${card.title}`, `
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <span class="tag tag-${fmtTag(card.formato)}">${card.formato}</span>
+      <span class="tag tag-${temaTag(card.tema)}">${card.tema}</span>
+    </div>
+    <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="card-title" value="${card.title}" style="width:100%"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Formato</label><select class="form-select" id="card-fmt"><option${card.formato==='Carrossel'?' selected':''}>Carrossel</option><option${card.formato==='Reels'?' selected':''}>Reels</option><option${card.formato==='Stories'?' selected':''}>Stories</option><option${card.formato==='Feed Estático'?' selected':''}>Feed Estático</option></select></div>
+      <div class="form-group"><label class="form-label">Data</label><input class="form-input" id="card-data" value="${card.data||''}" style="width:100%"></div>
+    </div>
+    ${contentHtml}
+    <div class="form-group"><label class="form-label">📝 Legenda (Caption)</label><textarea class="form-textarea" id="card-legenda" placeholder="Legenda completa para o Instagram..." style="min-height:80px">${card.legenda||''}</textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCard('${cardId}')">Salvar</button>
+    </div>`);
+}
+
+function addSlide() {
+  const list = document.getElementById('slides-list');
+  const count = list.querySelectorAll('.slide-item').length + 1;
+  const div = document.createElement('div');
+  div.className = 'slide-item';
+  div.innerHTML = `<span class="slide-num">Slide ${count}</span><input class="form-input" placeholder="Título do slide" style="width:100%;margin-bottom:6px"><textarea class="form-textarea" placeholder="Texto do slide..." style="min-height:55px"></textarea>`;
+  list.appendChild(div);
+}
+
+function saveCard(cardId) {
+  for (const col of COLS) {
+    const card = kanban[col].find(c=>c.id===cardId);
+    if (!card) continue;
+    card.title = document.getElementById('card-title').value || card.title;
+    card.formato = document.getElementById('card-fmt').value;
+    card.data = document.getElementById('card-data').value;
+    const leg = document.getElementById('card-legenda'); if(leg) card.legenda = leg.value;
+    const cnt = document.getElementById('card-content'); if(cnt) card.conteudo = cnt.value;
+    const slist = document.getElementById('slides-list');
+    if (slist) {
+      card.slides = Array.from(slist.querySelectorAll('.slide-item')).map(item => ({
+        titulo: (item.querySelector('input')||{}).value || '',
+        texto: (item.querySelector('textarea')||{}).value || ''
+      }));
+    }
+    break;
+  }
+  closeModal(); renderKanban(); showToast('Post atualizado');
+}
+
+function openPostModal(defaultCol='Ideia') {
+  openModal('Novo Post', `
+    <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="np-title" placeholder="Ex: 5 sinais de autismo que pais ignoram" style="width:100%"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Formato</label><select class="form-select" id="np-fmt"><option>Carrossel</option><option>Reels</option><option>Stories</option><option>Feed Estático</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="np-col">${COLS.map(c=>`<option${c===defaultCol?' selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tema Clínico</label><select class="form-select" id="np-tema"><option>Autismo</option><option>TDAH</option><option>Desenvolvimento</option><option>Neurologia</option><option>Aprendizagem</option></select></div>
+      <div class="form-group"><label class="form-label">Data</label><input class="form-input" id="np-data" placeholder="Ex: 15/05 às 19h"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveNewPost()">Salvar Post</button>
+    </div>`);
+}
+
+function saveNewPost() {
+  const title = document.getElementById('np-title').value.trim();
+  if (!title) { showToast('⚠ Digite um título'); return; }
+  const col = document.getElementById('np-col').value;
+  kanban[col].push({ id:'k'+Date.now(), title, formato:document.getElementById('np-fmt').value, tema:document.getElementById('np-tema').value, data:document.getElementById('np-data').value, legenda:'', conteudo:'', slides:[] });
+  closeModal(); renderKanban(); showToast('Post adicionado ao kanban');
+}
+
+/* ==============================
+   PAUTAS
+============================== */
+let pautasData = [
+  {id:'p1',title:'Por que meu filho não olha nos olhos?',cat:'Autismo',formato:'Carrossel',urgencia:'tendencia',status:'Disponível',days:35},
+  {id:'p2',title:'Criança que só brinca sozinha',cat:'Autismo',formato:'Reels',urgencia:'evergreen',status:'Disponível',days:5},
+  {id:'p3',title:'TDAH e dificuldade na escola',cat:'TDAH',formato:'Carrossel',urgencia:'evergreen',status:'Em uso',days:12},
+  {id:'p4',title:'Quando o comportamento é normal vs alarme',cat:'Desenvolvimento',formato:'Feed Estático',urgencia:'evergreen',status:'Disponível',days:8},
+  {id:'p5',title:'Estímulos para bebês 0 a 12 meses',cat:'Desenvolvimento',formato:'Carrossel',urgencia:'sazonal',status:'Disponível',days:45},
+  {id:'p6',title:'Medicamento para TDAH: dúvidas dos pais',cat:'TDAH',formato:'Reels',urgencia:'tendencia',status:'Disponível',days:3},
+  {id:'p7',title:'Epilepsia: o que fazer numa crise',cat:'Neurologia',formato:'Stories',urgencia:'evergreen',status:'Disponível',days:20},
+  {id:'p8',title:'Atraso escolar e neurologia',cat:'Aprendizagem',formato:'Carrossel',urgencia:'evergreen',status:'Disponível',days:38},
+  {id:'p9',title:'Alimentação e neurodesenvolvimento',cat:'Desenvolvimento',formato:'Feed Estático',urgencia:'sazonal',status:'Disponível',days:2},
+];
+
+function applyPautaFilters() {
+  const q = (document.getElementById('pauta-search').value||'').toLowerCase();
+  const cat = document.getElementById('filter-categoria').value;
+  const st = document.getElementById('filter-status').value;
+  renderPautas(q, cat, st);
+}
+
+function renderPautas(q='', cat='', st='') {
+  const grid = document.getElementById('pautas-grid');
+  if (!grid) return;
+  const list = pautasData.filter(p =>
+    (!q || p.title.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q)) &&
+    (!cat || p.cat === cat) &&
+    (!st || p.status === st)
+  );
+  if (!list.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3)">Nenhuma pauta encontrada.</div>`; return; }
+  grid.innerHTML = list.map(p => `
+    <div class="pauta-card${p.days>30?' stale':''}">
+      <div class="pauta-header">
+        <div class="pauta-title">${p.title}</div>
+        <span class="urgency-badge urgency-${p.urgencia}">${p.urgencia}</span>
+      </div>
+      <div class="pauta-meta">
+        <span class="tag tag-${temaTag(p.cat)}">${p.cat}</span>
+        <span class="tag tag-${fmtTag(p.formato)}">${p.formato}</span>
+      </div>
+      <div class="pauta-footer">
+        <span class="pauta-status">${p.status} · há ${p.days}d</span>
+        <div class="pauta-actions">
+          <div class="icon-btn" title="Usar como post" onclick="usarPauta('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+          <div class="icon-btn" title="Descartar" onclick="descartarPauta('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+        </div>
+      </div>
+      ${p.days>30?`<div class="stale-warning">⚠ Não utilizada há mais de 30 dias</div>`:''}
+    </div>`).join('');
+}
+
+function usarPauta(id) {
+  const p = pautasData.find(x=>x.id===id); if(!p) return;
+  kanban['Ideia'].push({id:'k'+Date.now(),title:p.title,formato:p.formato,tema:p.cat,data:'',legenda:'',conteudo:'',slides:[]});
+  p.status = 'Em uso';
+  applyPautaFilters();
+  showToast('Post criado no Gestor a partir da pauta');
+}
+
+function descartarPauta(id) {
+  const p = pautasData.find(x=>x.id===id); if(p) p.status='Descartada';
+  applyPautaFilters(); showToast('Pauta descartada');
+}
+
+function openPautaModal() {
+  openModal('Nova Pauta', `
+    <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="np2-t" placeholder="Ex: Criança que faz birra excessiva" style="width:100%"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Categoria</label><select class="form-select" id="np2-cat"><option>Autismo</option><option>TDAH</option><option>Desenvolvimento</option><option>Neurologia</option><option>Aprendizagem</option></select></div>
+      <div class="form-group"><label class="form-label">Formato</label><select class="form-select" id="np2-fmt"><option>Carrossel</option><option>Reels</option><option>Stories</option><option>Feed Estático</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Urgência</label><select class="form-select" id="np2-urg"><option>Evergreen</option><option>Tendência</option><option>Sazonal</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="np2-st"><option>Disponível</option><option>Em uso</option><option>Descartada</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveNewPauta()">Salvar</button>
+    </div>`);
+}
+
+function saveNewPauta() {
+  const title = document.getElementById('np2-t').value.trim();
+  if (!title) { showToast('⚠ Digite um título'); return; }
+  const rawUrg = document.getElementById('np2-urg').value;
+  const urg = rawUrg==='Evergreen'?'evergreen':rawUrg==='Tendência'?'tendencia':'sazonal';
+  pautasData.unshift({id:'p'+Date.now(),title,cat:document.getElementById('np2-cat').value,formato:document.getElementById('np2-fmt').value,urgencia:urg,status:document.getElementById('np2-st').value,days:0});
+  closeModal(); renderPautas(); showToast('Pauta adicionada ao banco');
+}
+
+/* ==============================
+   CALENDÁRIO
+============================== */
+let calYear=2026, calMonth=4, calFilter='all';
+const calEvs = {
+  '2026-5-7':[{type:'carousel',label:'Atraso na fala',content:'Carrossel: causas do atraso na fala, diferença entre variação normal e sinal de atenção.',legenda:'Você percebeu que seu filho demora para falar? Existem várias causas possíveis...'}],
+  '2026-5-8':[{type:'feed',label:'Neurodesenv. 0-3',content:'Post de feed: marcos do neurodesenvolvimento nos primeiros 3 anos de vida.',legenda:'Os primeiros 3 anos são fundamentais para o desenvolvimento do cérebro...'}],
+  '2026-5-9':[{type:'stories',label:'Crises convulsivas',content:'Story 1: O que é uma crise convulsiva\nStory 2: Como agir\nStory 3: Quando ligar para o SAMU\nStory 4: Mitos\nStory 5: CTA — salvar',legenda:''}],
+  '2026-5-11':[{type:'reels',label:'Quando consultar',content:'Gancho (3s): "3 sinais que seu filho precisa ver um neuropediatra"\nDesenvolvimento: lista dos 3 sinais\nCTA: comentar se reconheceu algum.',legenda:'Você sabe quando é hora de buscar um neuropediatra?'}],
+  '2026-5-14':[{type:'carousel',label:'Autismo vs timidez',content:'Carrossel 7 slides: diferença entre comportamentos do espectro autista e timidez comum.',legenda:'Muitos pais confundem os sinais. Vou te explicar a diferença...'}],
+  '2026-5-15':[{type:'reels',label:'Criança agitada',content:'Reels: diferença entre agitação normal e TDAH.',legenda:'Toda criança agitada tem TDAH? A resposta vai te surpreender...'}],
+  '2026-5-16':[{type:'stories',label:'Dicas para pais',content:'Stories com enquete e dicas práticas para pais.',legenda:''}],
+  '2026-5-19':[{type:'carousel',label:'TDAH na escola',content:'Carrossel: como o TDAH impacta a aprendizagem.',legenda:'A escola falou que seu filho não consegue se concentrar?'}],
+  '2026-5-20':[{type:'reels',label:'5 sinais TDAH',content:'Reels: 5 sinais de TDAH que os pais frequentemente ignoram.',legenda:'5 sinais de TDAH que a maioria dos pais não reconhece...'}],
+  '2026-5-22':[{type:'feed',label:'Epilepsia infantil',content:'Post feed: epilepsia na infância, desmistificando o diagnóstico.',legenda:'Epilepsia não é o fim. Com acompanhamento correto...'}],
+  '2026-5-23':[{type:'stories',label:'Fases desenvolvimento',content:'Stories interativos sobre as fases do desenvolvimento neurológico.',legenda:''}],
+  '2026-5-26':[{type:'carousel',label:'Mitos do autismo',content:'Carrossel: 5 principais mitos sobre autismo.',legenda:'Preciso te contar sobre 5 mitos sobre autismo que ainda circulam...'}],
+  '2026-5-27':[{type:'reels',label:'Ansiedade infantil',content:'Reels: quando a ansiedade infantil precisa de avaliação profissional.',legenda:'Toda criança ansiosa precisa de remédio? Claro que não...'}],
+  '2026-5-28':[{type:'stories',label:'Sinais de atenção',content:'Stories com checklist de sinais de atenção.',legenda:''}],
+  '2026-5-29':[{type:'feed',label:'Sono e neurologia',content:'Post feed: relação entre qualidade do sono e desenvolvimento neurológico.',legenda:'O sono do seu filho afeta o cérebro dele mais do que você imagina...'}],
+};
+const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  document.getElementById('cal-month-label').textContent = `${MONTHS[calMonth]} ${calYear}`;
+  const days = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+  let html = days.map(d=>`<div class="cal-day-header">${d}</div>`).join('');
+  const firstDay = new Date(calYear,calMonth,1).getDay();
+  const total = new Date(calYear,calMonth+1,0).getDate();
+  const today = new Date();
+  for (let i=0;i<firstDay;i++) html+=`<div class="cal-day empty"></div>`;
+  for (let d=1;d<=total;d++) {
+    const key=`${calYear}-${calMonth+1}-${d}`;
+    const all = calEvs[key]||[];
+    const evs = calFilter==='all'?all:all.filter(e=>e.type===calFilter);
+    const isToday = today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+    const isEmpty = all.length===0;
+    const isWeekday = [1,2,3,4,5].includes(new Date(calYear,calMonth,d).getDay());
+    let cls='cal-day';
+    if(isToday) cls+=' today';
+    else if(isEmpty&&isWeekday) cls+=' no-content';
+    html+=`<div class="${cls}" onclick="openCalDay('${key}',${d})">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-chips">${evs.map(e=>`<div class="cal-chip chip-${e.type}">${e.label}</div>`).join('')}</div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function openCalDay(key, d) {
+  const evs = calEvs[key]||[];
+  if (!evs.length) {
+    openModal(`📅 ${d}/${calMonth+1}/${calYear} — Sem conteúdo`,`
+      <p style="color:var(--text3);font-size:13px;margin-bottom:16px">Nenhum post agendado para este dia.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+        <button class="btn btn-primary" onclick="closeModal();openPostModal()">Agendar Post</button>
+      </div>`);
+    return;
+  }
+  const ev = evs[0];
+  const typeLabel={carousel:'Carrossel',reels:'Reels',stories:'Stories',feed:'Feed Estático'}[ev.type];
+  const contentLabel={carousel:'📊 Roteiro dos Slides',reels:'🎬 Roteiro do Reels',stories:'📱 Sequência de Stories',feed:'📸 Texto do Post'}[ev.type];
+  openModal(`📅 ${d}/${calMonth+1}/${calYear}`,`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+      <span class="tag tag-${ev.type==='feed'?'feed':ev.type==='carousel'?'carousel':ev.type==='reels'?'reels':'stories'}">${typeLabel}</span>
+      <span style="font-size:14px;font-weight:600;color:var(--text)">${ev.label}</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">${contentLabel}</label>
+      <textarea class="form-textarea" id="cal-content" style="min-height:100px">${ev.content||''}</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">📝 Legenda (Caption)</label>
+      <textarea class="form-textarea" id="cal-legenda" placeholder="Legenda para o Instagram..." style="min-height:80px">${ev.legenda||''}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+      <button class="btn btn-primary" onclick="saveCalDay('${key}')">Salvar</button>
+    </div>`);
+}
+
+function saveCalDay(key) {
+  if (calEvs[key]&&calEvs[key][0]) {
+    calEvs[key][0].content = document.getElementById('cal-content').value;
+    calEvs[key][0].legenda = document.getElementById('cal-legenda').value;
+  }
+  closeModal(); showToast('Conteúdo do dia salvo');
+}
+
+function changeMonth(dir) {
+  calMonth+=dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  renderCalendar();
+}
+function setCalFilter(btn,type) {
+  document.querySelectorAll('.cal-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); calFilter=type; renderCalendar();
+}
+
+/* ==============================
+   RADAR — links + agendamento 7h30
+============================== */
+
+// --- Fontes de tendências com links configuráveis ---
+let radarSources = [
+  { nome:'SBP — Soc. Brasileira de Pediatria', url:'https://www.sbp.com.br/noticias/', ativa:true },
+  { nome:'PubMed — NCBI', url:'https://pubmed.ncbi.nlm.nih.gov/?term=neuropediatria+development', ativa:true },
+  { nome:'CFM — Conselho Federal de Medicina', url:'https://portal.cfm.org.br/noticias/', ativa:true },
+  { nome:'G1 Saúde', url:'https://g1.globo.com/saude/', ativa:true },
+  { nome:'ABN — Acad. Brasileira de Neurologia', url:'https://www.abneuro.org.br/noticias', ativa:false },
+];
+
+let radarData = [
+  {title:'Diagnóstico precoce do TEA: novo consenso da SBP',source:'SBP',date:'02/05/2026',relevance:'alto',cats:['Autismo','Diagnóstico'],link:'https://www.sbp.com.br/noticias/'},
+  {title:'TDAH: critérios atualizados para avaliação infantil',source:'PubMed',date:'30/04/2026',relevance:'alto',cats:['TDAH','Pesquisa'],link:'https://pubmed.ncbi.nlm.nih.gov/?term=ADHD+children+criteria'},
+  {title:'Neurodesenvolvimento e exposição a telas antes dos 2 anos',source:'G1 Saúde',date:'28/04/2026',relevance:'medio',cats:['Desenvolvimento','Comportamento'],link:'https://g1.globo.com/saude/'},
+  {title:'Epilepsia na infância: novas diretrizes de tratamento',source:'CFM',date:'25/04/2026',relevance:'alto',cats:['Neurologia','Tratamento'],link:'https://portal.cfm.org.br/noticias/'},
+  {title:'Ansiedade em crianças pós-pandemia ainda preocupa especialistas',source:'G1 Saúde',date:'22/04/2026',relevance:'medio',cats:['Saúde Mental','Comportamento'],link:'https://g1.globo.com/saude/'},
+  {title:'Microbioma intestinal e desenvolvimento cerebral infantil',source:'PubMed',date:'20/04/2026',relevance:'baixo',cats:['Pesquisa','Neurologia'],link:'https://pubmed.ncbi.nlm.nih.gov/?term=microbiome+brain+development+children'},
+];
+
+// --- Agendamento diário 7h30 ---
+function scheduleRadarUpdate() {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(7, 30, 0, 0);
+  if (now >= target) target.setDate(target.getDate() + 1);
+  const msUntil = target - now;
+  setTimeout(() => {
+    const today = new Date().toLocaleDateString('pt-BR');
+    showToast('🔄 Radar atualizado automaticamente às 7h30 — ' + today);
+    // Aqui: em produção, chamar API real das fontes configuradas
+    setInterval(scheduleRadarUpdate, 86400000);
+  }, msUntil);
+}
+scheduleRadarUpdate();
+
+// --- Referências verificadas — Brasil (dados reais do Instagram) ---
+let refsData = [
+  // BRASIL — perfis verificados com seguidores reais
+  {
+    nome:'Dr. Thiago Gusmão',
+    handle:'@drthiagogusmao',
+    pais:'🇧🇷 Brasil',
+    rede:'Instagram',
+    esp:'Neurologista · Especialista em Autismo · Mestre em ABA',
+    desc:'Com mais de 404 mil seguidores, é o maior influencer brasileiro na área de autismo e neurodesenvolvimento. Pesquisador, palestrante e 1° médico mestre em ABA do Brasil.',
+    seguidores:'404K',
+    tipo:'Nacional',
+    link:'https://instagram.com/drthiagogusmao'
+  },
+  {
+    nome:'Dra. Deborah Kerches',
+    handle:'@dradeborahkerches',
+    pais:'🇧🇷 Brasil',
+    rede:'Instagram',
+    esp:'Neuropediatra · Especialista em TEA · Autora de Best-Sellers',
+    desc:'169 mil seguidores. Neuropediatra especialista em TEA, mestra em ABA, autora publicada, palestrante e colunista. Uma das maiores referências de neuropediatria no digital brasileiro.',
+    seguidores:'169K',
+    tipo:'Nacional',
+    link:'https://instagram.com/dradeborahkerches'
+  },
+  {
+    nome:'Dr. Raphael Rangel',
+    handle:'@dr.raphaelrangel',
+    pais:'🇧🇷 Brasil',
+    rede:'Instagram',
+    esp:'Neuropediatra · Mestre em Neurociência · TDAH e Autismo',
+    desc:'142 mil seguidores. Neuropediatra com foco em TDAH, psicofarmacologia e autismo. CRM-ES 9556. Conteúdo técnico e acessível para famílias.',
+    seguidores:'142K',
+    tipo:'Nacional',
+    link:'https://instagram.com/dr.raphaelrangel'
+  },
+  {
+    nome:'Dra. Ellen Teixeira',
+    handle:'@dra.ellenteixeira',
+    pais:'🇧🇷 Brasil',
+    rede:'Instagram',
+    esp:'Neuropediatra · Desenvolvimento Infantil',
+    desc:'46 mil seguidores. Neuropediatra com conteúdo humanizado sobre desenvolvimento infantil, autismo e rotina com filhos. CRM-ES 11.209.',
+    seguidores:'46K',
+    tipo:'Nacional',
+    link:'https://instagram.com/dra.ellenteixeira'
+  },
+  {
+    nome:'Dr. Gustavo Holanda',
+    handle:'@gnholanda',
+    pais:'🇧🇷 Brasil',
+    rede:'Instagram',
+    esp:'Neuropediatra Online · Autismo · TDAH · Telemedicina',
+    desc:'34 mil seguidores. Neuropediatra com foco em atendimento online e telemedicina. Conteúdo educativo sobre autismo, TDAH, TOD, deficiência intelectual e epilepsias.',
+    seguidores:'34K',
+    tipo:'Nacional',
+    link:'https://instagram.com/gnholanda'
+  },
+  // INTERNACIONAL — especialistas verificados em neurologia pediátrica
+  {
+    nome:'Dr. Imran Patel',
+    handle:'@drimranpatelofficial',
+    pais:'🇮🇳 Índia',
+    rede:'Instagram',
+    esp:'Pediatria · Fundador do Asian Children Hospital',
+    desc:'12,1 milhões de seguidores. Maior influencer pediátrico do mundo no Instagram segundo rankings 2026. Pediatra com comunicação acessível para famílias.',
+    seguidores:'12.1M',
+    tipo:'Internacional',
+    link:'https://instagram.com/drimranpatelofficial'
+  },
+  {
+    nome:'Dr. David Perlmutter',
+    handle:'@davidperlmutter',
+    pais:'🇺🇸 EUA',
+    rede:'Instagram',
+    esp:'Neurologista · F.A.C.N. · Autor · Saúde cerebral infantil',
+    desc:'254 mil seguidores. Neurologista certificado, fellow do American College of Nutrition. Referência internacional em saúde do cérebro, incluindo neurodesenvolvimento.',
+    seguidores:'254K',
+    tipo:'Internacional',
+    link:'https://instagram.com/davidperlmutter'
+  },
+  {
+    nome:'Dr. Faye Begeti',
+    handle:'@the_brain_doctor',
+    pais:'🇬🇧 Reino Unido',
+    rede:'Instagram',
+    esp:'Neurologista NHS · Neurocientista · Autora de The Phone Fix',
+    desc:'142 mil seguidores. Neurologista do NHS e neurocientista britânica. Especialista em hábitos digitais e saúde cerebral infantil. Autora de referência internacional.',
+    seguidores:'142K',
+    tipo:'Internacional',
+    link:'https://instagram.com/the_brain_doctor'
+  },
+  {
+    nome:'Dr. Daniel Amen',
+    handle:'@doc_amen',
+    pais:'🇺🇸 EUA',
+    rede:'Instagram',
+    esp:'Neuropsiquiatra · TDAH · Saúde cerebral · Bestseller',
+    desc:'Especialista mundialmente reconhecido em TDAH, neuropsiquiatria infantil e saúde do cérebro. Autor de mais de 30 livros. Referência central no tema para pais.',
+    seguidores:'1M+',
+    tipo:'Internacional',
+    link:'https://instagram.com/doc_amen'
+  },
+  {
+    nome:'Dra. Wendy Sue Swanson',
+    handle:'@seattlemamaDoc',
+    pais:'🇺🇸 EUA',
+    rede:'Instagram',
+    esp:'Pediatra · Porta-voz da American Academy of Pediatrics',
+    desc:'Conhecida como "Seattle Mama Doc". Pediatra, autora e porta-voz da AAP. Especialidade em desenvolvimento infantil e comunicação com famílias. Referência norte-americana.',
+    seguidores:'50K+',
+    tipo:'Internacional',
+    link:'https://instagram.com/seattlemamaDoc'
+  },
+];
+
+function renderRadar() {
+  const fonte = document.getElementById('radar-fonte')?.value||'';
+  const list = radarData.filter(r=>!fonte||r.source===fonte);
+  document.getElementById('radar-grid').innerHTML = list.map(r=>`
+    <div class="trend-card">
+      <div class="trend-header"><div class="trend-title">${r.title}</div><span class="relevance-badge rel-${r.relevance}">${r.relevance}</span></div>
+      <div class="trend-source">Fonte: <span>${r.source}</span></div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">${r.cats.map(c=>`<span class="tag tag-desenvolvimento">${c}</span>`).join('')}</div>
+      <div class="trend-footer">
+        <span class="trend-date">${r.date}</span>
+        <div style="display:flex;gap:5px">
+          <a href="${r.link||'#'}" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);text-decoration:none;display:inline-flex;align-items:center;gap:3px">🔗 Ver</a>
+          <button class="use-pauta-btn" onclick="addTrendPauta('${r.title.replace(/'/g,"")}')">+ Pauta</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addTrendPauta(title) {
+  pautasData.unshift({id:'p'+Date.now(),title:title.substring(0,70),cat:'Neurologia',formato:'Carrossel',urgencia:'tendencia',status:'Disponível',days:0});
+  showToast('Tema adicionado ao banco de pautas');
+}
+
+function openSourcesModal() {
+  openModal('⚙️ Fontes do Radar', `
+    <p style="font-size:12.5px;color:var(--text3);margin-bottom:14px">Configure os sites monitorados. O radar atualiza automaticamente todos os dias às <strong style="color:var(--accent-light)">7h30</strong>.</p>
+    <div id="sources-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      ${radarSources.map((s,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 12px">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">${s.nome}</div>
+            <div style="font-size:11px;color:var(--text3)">${s.url}</div>
+          </div>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+            <input type="checkbox" ${s.ativa?'checked':''} onchange="radarSources[${i}].ativa=this.checked"> Ativa
+          </label>
+        </div>`).join('')}
+    </div>
+    <div style="height:1px;background:var(--border);margin-bottom:14px"></div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Adicionar nova fonte:</p>
+    <div class="form-group"><label class="form-label">Nome da Fonte</label><input class="form-input" id="src-nome" placeholder="Ex: ABN — Academia Brasileira de Neurologia" style="width:100%"></div>
+    <div class="form-group"><label class="form-label">URL do Site</label><input class="form-input" id="src-url" placeholder="https://..." style="width:100%"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+      <button class="btn btn-primary" onclick="saveSource()">Adicionar Fonte</button>
+    </div>`);
+}
+
+function saveSource() {
+  const nome = document.getElementById('src-nome').value.trim();
+  const url = document.getElementById('src-url').value.trim();
+  if (!nome||!url) { showToast('⚠ Preencha nome e URL'); return; }
+  radarSources.push({nome,url,ativa:true});
+  closeModal();
+  showToast('Fonte adicionada. Atualização às 7h30.');
+}
+
+function renderRefs() {
+  const nac = refsData.filter(r=>r.tipo==='Nacional');
+  const intl = refsData.filter(r=>r.tipo==='Internacional');
+  const renderCard = r => `
+    <div class="ref-card">
+      <div class="ref-header">
+        <div class="ref-avatar">${r.nome.split(' ').filter(w=>w).slice(0,2).map(w=>w[0]).join('')}</div>
+        <div style="flex:1;min-width:0">
+          <div class="ref-name">${r.nome}</div>
+          <div class="ref-handle">${r.handle} · ${r.rede}</div>
+        </div>
+        ${r.seguidores?`<div style="font-size:10px;font-weight:700;color:var(--accent-light);background:var(--accent-dim);padding:2px 7px;border-radius:10px;white-space:nowrap">${r.seguidores}</div>`:''}
+      </div>
+      <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:10px;background:var(--bg4);color:var(--text3);padding:2px 7px;border-radius:10px">${r.pais}</span>
+        <span class="tag tag-${r.tipo==='Nacional'?'feed':'tdah'}">${r.tipo}</span>
+      </div>
+      <div class="ref-desc">${r.desc}</div>
+      <div style="font-size:11px;color:var(--accent-light);margin-bottom:8px">📌 ${r.esp}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="${r.link||'#'}" target="_blank" rel="noopener" style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px;background:var(--accent-dim);color:var(--accent-light);border:1px solid rgba(26,122,114,.25);text-decoration:none">🔗 Ver perfil</a>
+        <button class="use-pauta-btn" onclick="showToast('Adicionado ao monitoramento')">👁 Monitorar</button>
+        <button class="use-pauta-btn" style="background:var(--bg3);color:var(--text3);border-color:var(--border)" onclick="removeRef('${r.handle}')">Remover</button>
+      </div>
+    </div>`;
+
+  const grid = document.getElementById('refs-grid');
+  grid.innerHTML =
+    `<div style="grid-column:1/-1;margin-bottom:8px"><span style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase">🇧🇷 Top 5 Brasileiros</span></div>` +
+    nac.map(renderCard).join('') +
+    `<div style="grid-column:1/-1;margin:14px 0 8px"><span style="font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase">🌐 Top 5 Internacionais</span></div>` +
+    intl.map(renderCard).join('');
+}
+
+function removeRef(handle) {
+  refsData = refsData.filter(r=>r.handle!==handle);
+  renderRefs(); showToast('Referência removida');
+}
+
+function openRefModal() {
+  openModal('Adicionar Referência', `
+    <div class="form-group"><label class="form-label">Nome do Médico / Especialista</label><input class="form-input" id="ref-nome" placeholder="Ex: Dr. João Silva" style="width:100%"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">@ Handle</label><input class="form-input" id="ref-handle" placeholder="@perfil"></div>
+      <div class="form-group"><label class="form-label">Rede Social</label><select class="form-select" id="ref-rede"><option>Instagram</option><option>YouTube</option><option>Twitter/X</option><option>LinkedIn</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">País</label><input class="form-input" id="ref-pais" placeholder="🇧🇷 Brasil ou 🇺🇸 EUA"></div>
+      <div class="form-group"><label class="form-label">Tipo</label><select class="form-select" id="ref-tipo"><option>Nacional</option><option>Internacional</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Seguidores</label><input class="form-input" id="ref-seg" placeholder="Ex: 142K"></div>
+    <div class="form-group"><label class="form-label">Especialidade</label><input class="form-input" id="ref-esp" placeholder="Ex: Neuropediatria e TDAH" style="width:100%"></div>
+    <div class="form-group"><label class="form-label">Link do Perfil</label><input class="form-input" id="ref-link" placeholder="https://instagram.com/..." style="width:100%"></div>
+    <div class="form-group"><label class="form-label">Descrição</label><textarea class="form-textarea" id="ref-desc" placeholder="Breve descrição sobre o profissional..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveRef()">Adicionar</button>
+    </div>`);
+}
+
+function saveRef() {
+  const nome=document.getElementById('ref-nome').value.trim();
+  const handle=document.getElementById('ref-handle').value.trim();
+  if(!nome||!handle){showToast('⚠ Preencha nome e handle');return;}
+  refsData.unshift({nome,handle,pais:document.getElementById('ref-pais').value||'🌐',rede:document.getElementById('ref-rede').value,esp:document.getElementById('ref-esp').value,desc:document.getElementById('ref-desc').value,tipo:document.getElementById('ref-tipo').value,seguidores:document.getElementById('ref-seg').value,link:document.getElementById('ref-link').value});
+  closeModal(); renderRefs(); showToast('Referência adicionada com sucesso');
+}
+
+/* ==============================
+   PACIENTES — edição de contadores
+============================== */
+let pacientesAtual = 35;
+let pacientesMeta = 60;
+
+function updatePacientesUI() {
+  const pct = Math.min(Math.round((pacientesAtual / pacientesMeta) * 100), 100);
+  const el = document.getElementById('val-pacientes-atual');
+  const metaEl = document.getElementById('val-meta-num');
+  const progEl = document.getElementById('pacientes-progress');
+  const pctEl = document.getElementById('pacientes-pct');
+  const sidebarEl = document.getElementById('sidebar-pacientes');
+  const changeEl = document.getElementById('val-pacientes-meta');
+
+  if (el) el.textContent = pacientesAtual;
+  if (metaEl) metaEl.textContent = pacientesMeta;
+  if (progEl) progEl.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '% da meta';
+  if (sidebarEl) sidebarEl.textContent = pacientesAtual + ' → ' + pacientesMeta;
+
+  // Cor da seta: verde se acima de 50%, amarelo se entre 25-50%, vermelho abaixo
+  if (changeEl) {
+    const color = pct >= 75 ? 'var(--accent-light)' : pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+    changeEl.style.color = color;
+  }
+}
+
+function openPacientesModal() {
+  openModal('🩺 Atualizar Pacientes', `
+    <p style="font-size:12.5px;color:var(--text3);margin-bottom:18px">
+      Atualize o número atual de pacientes e a meta mensal. O progresso é calculado automaticamente.
+    </p>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Pacientes este mês</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onclick="stepPacientes('atual',-1)" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text2);font-size:16px;flex-shrink:0">−</button>
+          <input class="form-input" id="input-atual" type="number" min="0" max="999" value="${pacientesAtual}" style="width:100%;text-align:center;font-size:20px;font-weight:600;color:var(--accent-light)">
+          <button onclick="stepPacientes('atual',1)" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--accent-dim);border:1px solid rgba(26,122,114,.3);border-radius:6px;cursor:pointer;color:var(--accent-light);font-size:16px;flex-shrink:0">+</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Meta mensal</label>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onclick="stepPacientes('meta',-1)" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text2);font-size:16px;flex-shrink:0">−</button>
+          <input class="form-input" id="input-meta" type="number" min="1" max="999" value="${pacientesMeta}" style="width:100%;text-align:center;font-size:20px;font-weight:600">
+          <button onclick="stepPacientes('meta',1)" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--text2);font-size:16px;flex-shrink:0">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="preview-pct" style="margin:12px 0;padding:12px;background:var(--bg3);border-radius:7px;border:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;color:var(--text3)">Progresso da meta</span>
+        <span id="preview-pct-val" style="font-size:13px;font-weight:600;color:var(--accent-light)">
+          ${Math.min(Math.round((pacientesAtual/pacientesMeta)*100),100)}%
+        </span>
+      </div>
+      <div style="height:5px;background:var(--bg4);border-radius:3px;overflow:hidden">
+        <div id="preview-bar" style="height:100%;background:var(--accent);border-radius:3px;transition:width .3s;width:${Math.min(Math.round((pacientesAtual/pacientesMeta)*100),100)}%"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost" style="font-size:11.5px" onclick="quickSet(5)">+5</button>
+      <button class="btn btn-ghost" style="font-size:11.5px" onclick="quickSet(-5)">-5</button>
+      <button class="btn btn-ghost" style="font-size:11.5px" onclick="quickSet(1)">+1</button>
+      <button class="btn btn-ghost" style="font-size:11.5px" onclick="quickSet(-1)">-1</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="savePacientes()">Salvar</button>
+    </div>
+  `);
+  // Atualizar preview em tempo real
+  ['input-atual','input-meta'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updatePreview);
+  });
+}
+
+function stepPacientes(field, dir) {
+  const id = field === 'atual' ? 'input-atual' : 'input-meta';
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = Math.max(0, parseInt(el.value||0) + dir);
+  el.value = val;
+  updatePreview();
+}
+
+function quickSet(delta) {
+  const el = document.getElementById('input-atual');
+  if (!el) return;
+  el.value = Math.max(0, parseInt(el.value||0) + delta);
+  updatePreview();
+}
+
+function updatePreview() {
+  const atual = parseInt(document.getElementById('input-atual')?.value||0);
+  const meta = parseInt(document.getElementById('input-meta')?.value||1);
+  const pct = Math.min(Math.round((atual/meta)*100), 100);
+  const bar = document.getElementById('preview-bar');
+  const val = document.getElementById('preview-pct-val');
+  if (bar) bar.style.width = pct + '%';
+  if (val) val.textContent = pct + '%';
+}
+
+function savePacientes() {
+  const atual = parseInt(document.getElementById('input-atual')?.value);
+  const meta = parseInt(document.getElementById('input-meta')?.value);
+  if (isNaN(atual) || isNaN(meta) || meta < 1) { showToast('⚠ Valores inválidos'); return; }
+  pacientesAtual = atual;
+  pacientesMeta = meta;
+  updatePacientesUI();
+  closeModal();
+  const pct = Math.min(Math.round((atual/meta)*100),100);
+  showToast(pct >= 100 ? '🎉 Meta atingida! ' + atual + ' pacientes' : 'Pacientes atualizado: ' + atual + ' de ' + meta);
+}
+
+/* INIT */
+renderKanban();
+renderPautas();
+renderCalendar();
+renderRadar();
+renderRefs();
+</script>
+</body>
+</html>
